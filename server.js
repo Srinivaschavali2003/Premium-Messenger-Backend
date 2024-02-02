@@ -36,12 +36,6 @@ app.use('/api/v1/message', require('./routes/message.route'))
 connectDB()
 .then(msg=>{
   console.log(msg)
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'))
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-    })
-  }
   http.listen(process.env.PORT || 5000, () => console.log(`Server is running on PORT ${process.env.PORT}.`))
 })
 .catch(err=>{
