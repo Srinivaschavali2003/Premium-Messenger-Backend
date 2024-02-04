@@ -9,7 +9,7 @@ const { generateActivationToken, generateAccessToken, generateRefreshToken } = r
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 const authCtrl = {
-  register: async(req, res) => {
+ register: async(req, res) => {
     try {
       const { name, email, password } = req.body
       
@@ -19,14 +19,10 @@ const authCtrl = {
 
       const passwordHash = await bcrypt.hash(password, 12)
 
-      const newUser = { name, email, password: passwordHash }
-      
-      const activationToken = generateActivationToken(newUser)
+      const newUser = new User({ name, email, password: passwordHash })
 
-      const url = `${process.env.CLIENT_URL}/activate/${activationToken}`
-      sendMail(email, url, 'Account Activation')
-
-      return res.status(200).json({msg: 'Email activation link has been sent to your email.'})
+      await newUser.save()
+      return res.status(200).json({msg: 'Account has been activated successfully.'})
     } catch (err) {
       return res.status(500).json({msg: err.message})
     }
